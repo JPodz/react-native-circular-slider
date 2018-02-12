@@ -1,6 +1,6 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { PanResponder, View,Platform } from 'react-native';
-import Svg, { Circle, G, LinearGradient, Path, Defs, Stop, Text, TSpan } from 'react-native-svg';
+import Svg, { Circle, G, LinearGradient, Path, Defs, Stop, Text, TSpan, Image, ClipPath, Rect } from 'react-native-svg';
 import range from 'lodash.range';
 import { interpolateHcl as interpolateGradient } from 'd3-interpolate';
 import ClockFace from './ClockFace';
@@ -66,7 +66,9 @@ export default class CircularSlider extends PureComponent {
     centerCircleText:PropTypes.string,
     sickBar:PropTypes.bool,
     famishedBar:PropTypes.bool,
-    touchRelease:PropTypes.func
+    touchRelease:PropTypes.func,
+    forkIcon: PropTypes.element,
+    eatSlider: PropTypes.bool
   }
 
   static defaultProps = {
@@ -78,7 +80,8 @@ export default class CircularSlider extends PureComponent {
     clockFaceColor: '#9d9d9d',
     bgCircleColor: '#171717',
     textBgCircleColor:'white',
-    touchRelease:false
+    touchRelease:false,
+    eatSlider:false,
   }
 
   state = {
@@ -158,7 +161,7 @@ export default class CircularSlider extends PureComponent {
 
   render() {
     const { startAngle, angleLength, segments, strokeWidth, radius, gradientColorFrom, gradientColorTo, bgCircleColor,
-      showClockFace, clockFaceColor, startIcon, stopIcon,textBgCircleColor,textCircleStrokeColor,centerCircleText,sickBar,famishedBar} = this.props;
+      showClockFace, clockFaceColor, startIcon, stopIcon,textBgCircleColor,textCircleStrokeColor,centerCircleText,sickBar,famishedBar,forkIcon,eatSlider} = this.props;
     const satisfied = (centerCircleText.toLowerCase() == 'satisfied' && Platform.OS != 'ios') ? "0 0 0 0 0 0 -9 12" : "0";
     const containerWidth = this.getContainerWidth();
 
@@ -211,9 +214,7 @@ export default class CircularSlider extends PureComponent {
           */}
 
           <G transform={{ translate: `${strokeWidth/2 + radius + 1}, ${strokeWidth/2 + radius + 1}` }}>
-
-
-            <Circle
+          <Circle
               cx="30"
               cy="70"
               r={radius}
@@ -222,11 +223,6 @@ export default class CircularSlider extends PureComponent {
               stroke={bgCircleColor}
               strokeDasharray="950"
               strokeDashoffset='-300.292'
-
-
-
-
-
             />
             <Circle
               cx="30"
@@ -301,9 +297,11 @@ export default class CircularSlider extends PureComponent {
               */}
 
             <G fill="none" strokeWidth="50" >
-             <Path x="30" y="60"  d="M 0,-100 A 100,100 0 0,1 86.6,-50" stroke="#c4c4c4"/>
-             <Path x="30" y="60" d="M -86.6,-50 A 100,100 0 0,1 0,-100" stroke="#c4c4c4"/>
+             <Path x="30" y="60"  d="M 0,-100 A 100,100 0 0,1 86.6,-50" stroke="#D7D7D7"/>
+             <Path x="30" y="60" d="M -86.6,-50 A 100,100 0 0,1 0,-100" stroke="#D7D7D7"/>
            </G>
+
+
             {/*
             <Circle
               cx="30"
@@ -324,9 +322,34 @@ export default class CircularSlider extends PureComponent {
               stroke={textCircleStrokeColor}
               strokeWidth="15"
             />
-            <Text
+            {eatSlider && (
+           <G transform={{translate:(Platform.OS == 'ios') ? '-120,-65' : '-140,-150'}} >
+           {Platform.OS == 'ios' && (
+           <Image
+                x="110"
+                y="110"
+                width="40%"
+                height="15%"
+                href={require('./images/small_spoon.png')}
+            />
+            )}
+            {Platform.OS != 'ios' && (
+            <Image
+                 x="135"
+                 y="185"
+                 width="40%"
+                 height="15%"
+                 href={require('./images/small_spoon.png')}
+             />
+             )}
+
+
+            </G>
+
+          )}
+        <Text
               x="30"
-              y="50"
+              y="60"
               textAnchor="middle"
               fontSize="20"
               fill="black"
